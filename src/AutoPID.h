@@ -61,7 +61,7 @@ class AutoPIDRelay : public AutoPID {
  private:
   bool *_relayState;
   unsigned long _pulseWidth;
-  unsigned long _lastPulseTime;
+  unsigned long _pulseOffset;
   double _pulseValue;
   bool _hasRun = false;
 };  // class AutoPIDRelay

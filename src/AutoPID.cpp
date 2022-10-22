@@ -60,7 +60,8 @@ void AutoPID::run() {
       _integral +=
           (_error + _previousError) / 2 * _dT / 1000.0;  // Riemann sum integral
       //_integral = constrain(_integral, _outputMin/_Ki, _outputMax/_Ki);
-      double _dError = (_error - _previousError) / _dT / 1000.0;  // derivative
+      double _dError =
+          (_error - _previousError) / (_dT / 1000.0);  // derivative
       _previousError = _error;
       double PID = (_Kp * _error) + (_Ki * _integral) + (_Kd * _dError);
       //*_output = _outputMin + (constrain(PID, 0, 1) * (_outputMax -
@@ -89,17 +90,15 @@ void AutoPID::setIntegral(double integral) { _integral = integral; }
 void AutoPIDRelay::run() {
   AutoPID::run();
   if (!_hasRun) {
-    _lastPulseTime = millis();
+    _pulseOffset = millis();
     _hasRun = true;
   }
-  while ((millis() - _lastPulseTime) > _pulseWidth)
-    _lastPulseTime += _pulseWidth;
-  *_relayState = ((millis() - _lastPulseTime) < (_pulseValue * _pulseWidth));
+  *_relayState = ((millis() - _pulseOffset) % _pulseWidth) < _pulseValue;
 }
 
 double AutoPIDRelay::getPulseValue() { return (isStopped() ? 0 : _pulseValue); }
 
 void AutoPIDRelay::reset() {
   AutoPID::reset();
-  _lastPulseTime = millis();
+  _pulseOffset = millis();
 }
