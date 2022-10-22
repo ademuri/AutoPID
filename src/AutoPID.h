@@ -47,15 +47,21 @@ class AutoPID {
   float getOutput();
 
  private:
-  float _Kp, _Ki, _Kd;
-  float _integral, _previousError;
-  float _bangOn, _bangOff;
-  float _input;
-  float _setpoint;
-  float _output;
-  float _outputMin, _outputMax;
-  unsigned long _timeStep, _lastStep;
-  bool _stopped;
+  float _Kp;
+  float _Ki;
+  float _Kd;
+  float _integral = 0;
+  float _previousError = 0;
+  float _bangOn = 0;
+  float _bangOff = 0;
+  float _input = 0;
+  float _setpoint = 0;
+  float _output = 0;
+  float _outputMin = 0;
+  float _outputMax = 0;
+  unsigned long _timeStep = 0;
+  unsigned long _lastStep = 0;
+  bool _stopped = false;
 
 };  // class AutoPID
 
@@ -71,9 +77,9 @@ class AutoPIDRelay : public AutoPID {
   void reset() override;
 
  private:
-  bool _relayState;
+  bool _relayState = false;
   const unsigned long _pulseWidth;
-  unsigned long _pulseOffset;
-  float _pulseValue;
+  unsigned long _pulseOffset = 0;
+  float _pulseValue = 0;
   bool _hasRun = false;
 };  // class AutoPIDRelay
