@@ -30,7 +30,7 @@ void AutoPID::setOutputRange(float outputMin, float outputMax) {
 
 void AutoPID::setTimeStep(unsigned long timeStep) { _timeStep = timeStep; }
 
-void AutoPID::setSetpoint(float setpoint) { _setpoint = setpoint; }
+void AutoPID::setSetPoint(float setpoint) { _setpoint = setpoint; }
 
 bool AutoPID::atSetPoint(float threshold) {
   return abs(_setpoint - _input) <= threshold;

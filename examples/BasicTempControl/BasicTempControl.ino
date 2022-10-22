@@ -67,7 +67,7 @@ void setup() {
 void loop() {
   updateTemperature();
   setPoint = analogRead(POT_PIN);
-  myPID.setSetpoint(setPoint);
+  myPID.setSetPoint(setPoint);
   myPID.run(temperature);  // call every loop, updates automatically at certain
                            // time interval
   analogWrite(OUTPUT_PIN, myPID.getOutput());

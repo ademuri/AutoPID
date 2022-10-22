@@ -7,7 +7,7 @@ if [ "${1-}" == "-h" ] || [ "${1-}" == "--help" ]; then
   exit 0
 fi
 
-BOARDS="--board teensy31 --board adafruit_feather_m0"
+BOARDS="--board teensy31 --board adafruit_feather_m0 --board uno"
 if [ "${1-}" != "" ]; then
   BOARDS="$1"
 fi

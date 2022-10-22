@@ -19,7 +19,7 @@ class AutoPID {
   // Allows manual adjustment of time step (default 1000ms)
   void setTimeStep(unsigned long timeStep);
 
-  void setSetpoint(float setpoint);
+  void setSetPoint(float setpoint);
 
   // Returns true when at set point (+-threshold)
   bool atSetPoint(float threshold);
@@ -51,11 +51,8 @@ class AutoPID {
 
 class AutoPIDRelay : public AutoPID {
  public:
-  AutoPIDRelay(bool *relayState, float pulseWidth, float Kp, float Ki, float Kd)
-      : AutoPID(/*outputMin=*/0, /*outputMax=*/1.0, Kp, Ki, Kd) {
-    _relayState = relayState;
-    _pulseWidth = pulseWidth;
-  };
+  AutoPIDRelay(unsigned long pulseWidth, float Kp, float Ki, float Kd)
+      : AutoPID(/*outputMin=*/0, /*outputMax=*/1.0, Kp, Ki, Kd), _pulseWidth(pulseWidth) {};
 
   void run(float input) override;
 
@@ -65,7 +62,7 @@ class AutoPIDRelay : public AutoPID {
 
  private:
   bool _relayState;
-  unsigned long _pulseWidth;
+  const unsigned long _pulseWidth;
   unsigned long _pulseOffset;
   float _pulseValue;
   bool _hasRun = false;
