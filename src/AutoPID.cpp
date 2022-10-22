@@ -33,7 +33,12 @@ void AutoPID::setTimeStep(unsigned long timeStep) { _timeStep = timeStep; }
 void AutoPID::setSetPoint(float setpoint) { _setpoint = setpoint; }
 
 bool AutoPID::atSetPoint(float threshold) {
-  return abs(_setpoint - _input) <= threshold;
+  // Note: avoid using abs because it's an Arduino macro, and std::abs is not available on older platforms (e.g. Uno)
+  float diff = _setpoint - _input;
+  if (diff < 0) {
+    diff = -diff;
+  }
+  return diff <= threshold;
 }  // bool AutoPID::atSetPoint
 
 void AutoPID::run(float input) {

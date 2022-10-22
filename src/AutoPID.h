@@ -1,12 +1,13 @@
 #pragma once
 
+#include <stdint.h>
+
 #ifdef ARDUINO
 #include <Arduino.h>
 
 #else
 // Declare Arduino functions, so that this library can be used in native tests.
-extern unsigned long millis();
-extern float abs(float);
+extern uint32_t millis();
 extern float constrain(float, float, float);
 
 #endif
