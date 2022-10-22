@@ -26,7 +26,7 @@ class AutoPID {
   void run();
   // Stops PID functionality, output sets to
   void stop();
-  void reset();
+  virtual void reset();
   bool isStopped();
 
   double getIntegral();
@@ -56,9 +56,12 @@ class AutoPIDRelay : public AutoPID {
 
   double getPulseValue();
 
+  void reset() override;
+
  private:
   bool *_relayState;
-  unsigned long _pulseWidth, _lastPulseTime;
+  unsigned long _pulseWidth;
+  unsigned long _lastPulseTime;
   double _pulseValue;
 };  // class AutoPIDRelay
 

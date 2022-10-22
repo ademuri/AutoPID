@@ -88,9 +88,18 @@ void AutoPID::setIntegral(double integral) { _integral = integral; }
 
 void AutoPIDRelay::run() {
   AutoPID::run();
+  if (!_hasRun) {
+    _lastPulseTime = millis();
+    _hasRun = true;
+  }
   while ((millis() - _lastPulseTime) > _pulseWidth)
     _lastPulseTime += _pulseWidth;
   *_relayState = ((millis() - _lastPulseTime) < (_pulseValue * _pulseWidth));
 }
 
 double AutoPIDRelay::getPulseValue() { return (isStopped() ? 0 : _pulseValue); }
+
+void AutoPIDRelay::reset() {
+  AutoPID::reset();
+  _lastPulseTime = millis();
+}
