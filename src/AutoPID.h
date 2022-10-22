@@ -63,6 +63,7 @@ class AutoPIDRelay : public AutoPID {
   unsigned long _pulseWidth;
   unsigned long _lastPulseTime;
   double _pulseValue;
+  bool _hasRun = false;
 };  // class AutoPIDRelay
 
 #endif
