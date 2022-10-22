@@ -56,6 +56,8 @@ void AutoPID::run(float input) {
     _output = _outputMin;
     _lastStep = millis();
   } else {  // otherwise use PID control
+    // TODO: reset integrators when switching between bang-bang and PID?
+    // Or, maybe implement: http://brettbeauregard.com/blog/2011/04/improving-the-beginner%e2%80%99s-pid-reset-windup/
     unsigned long _dT =
         millis() - _lastStep;  // calculate time since last update
     if (_dT >= _timeStep) {    // if long enough, do PID calculations
@@ -98,6 +100,7 @@ void AutoPIDRelay::run(float input) {
     _pulseOffset = millis();
     _hasRun = true;
   }
+  _pulseValue = getOutput() * _pulseWidth;
   _relayState = ((millis() - _pulseOffset) % _pulseWidth) < _pulseValue;
 }
 
