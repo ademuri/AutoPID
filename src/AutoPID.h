@@ -47,7 +47,8 @@ class AutoPIDRelay : public AutoPID {
  public:
   AutoPIDRelay(double *input, double *setpoint, bool *relayState,
                double pulseWidth, double Kp, double Ki, double Kd)
-      : AutoPID(input, setpoint, &_pulseValue, 0, 1.0, Kp, Ki, Kd) {
+      : AutoPID(input, setpoint, /*output=*/&_pulseValue, /*outputMin=*/0,
+                /*outputMax=*/1.0, Kp, Ki, Kd) {
     _relayState = relayState;
     _pulseWidth = pulseWidth;
   };
