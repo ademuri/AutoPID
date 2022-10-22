@@ -1,6 +1,8 @@
-#ifndef AUTOPID_H
-#define AUTOPID_H
+#pragma once
+
+#ifdef ARDUINO
 #include <Arduino.h>
+#endif
 
 class AutoPID {
  public:
@@ -67,5 +69,3 @@ class AutoPIDRelay : public AutoPID {
   float _pulseValue;
   bool _hasRun = false;
 };  // class AutoPIDRelay
-
-#endif
