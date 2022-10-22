@@ -6,8 +6,8 @@ class AutoPID {
  public:
   // Constructor - takes pointer inputs for control variales, so they are
   // updated automatically
-  AutoPID(float *input, float *setpoint, float *output, float outputMin,
-          float outputMax, float Kp, float Ki, float Kd);
+  AutoPID(float *setpoint, float *output, float outputMin, float outputMax,
+          float Kp, float Ki, float Kd);
   // Allows manual adjustment of gains
   void setGains(float Kp, float Ki, float Kd);
   // Sets bang-bang control ranges, separate upper and lower offsets, zero for
@@ -23,7 +23,7 @@ class AutoPID {
   bool atSetPoint(float threshold);
   // Runs PID calculations when needed. Should be called repeatedly in loop.
   // Automatically reads input and sets output via pointers
-  void run();
+  virtual void run(float input);
   // Stops PID functionality, output sets to
   void stop();
   virtual void reset();
@@ -36,7 +36,8 @@ class AutoPID {
   float _Kp, _Ki, _Kd;
   float _integral, _previousError;
   float _bangOn, _bangOff;
-  float *_input, *_setpoint, *_output;
+  float _input;
+  float *_setpoint, *_output;
   float _outputMin, _outputMax;
   unsigned long _timeStep, _lastStep;
   bool _stopped;
@@ -45,15 +46,15 @@ class AutoPID {
 
 class AutoPIDRelay : public AutoPID {
  public:
-  AutoPIDRelay(float *input, float *setpoint, bool *relayState,
-               float pulseWidth, float Kp, float Ki, float Kd)
-      : AutoPID(input, setpoint, /*output=*/&_pulseValue, /*outputMin=*/0,
+  AutoPIDRelay(float *setpoint, bool *relayState, float pulseWidth, float Kp,
+               float Ki, float Kd)
+      : AutoPID(setpoint, /*output=*/&_pulseValue, /*outputMin=*/0,
                 /*outputMax=*/1.0, Kp, Ki, Kd) {
     _relayState = relayState;
     _pulseWidth = pulseWidth;
   };
 
-  void run();
+  void run(float input) override;
 
   float getPulseValue();
 

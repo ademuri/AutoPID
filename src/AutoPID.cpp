@@ -1,8 +1,7 @@
 #include "AutoPID.h"
 
-AutoPID::AutoPID(float *input, float *setpoint, float *output, float outputMin,
+AutoPID::AutoPID(float *setpoint, float *output, float outputMin,
                  float outputMax, float Kp, float Ki, float Kd) {
-  _input = input;
   _setpoint = setpoint;
   _output = output;
   _outputMin = outputMin;
@@ -34,20 +33,21 @@ void AutoPID::setOutputRange(float outputMin, float outputMax) {
 void AutoPID::setTimeStep(unsigned long timeStep) { _timeStep = timeStep; }
 
 bool AutoPID::atSetPoint(float threshold) {
-  return abs(*_setpoint - *_input) <= threshold;
+  return abs(*_setpoint - _input) <= threshold;
 }  // bool AutoPID::atSetPoint
 
-void AutoPID::run() {
+void AutoPID::run(float input) {
+  _input = input;
   if (_stopped) {
     _stopped = false;
     reset();
   }
   // if bang thresholds are defined and we're outside of them, use bang-bang
   // control
-  if (_bangOn && ((*_setpoint - *_input) > _bangOn)) {
+  if (_bangOn && ((*_setpoint - _input) > _bangOn)) {
     *_output = _outputMax;
     _lastStep = millis();
-  } else if (_bangOff && ((*_input - *_setpoint) > _bangOff)) {
+  } else if (_bangOff && ((_input - *_setpoint) > _bangOff)) {
     *_output = _outputMin;
     _lastStep = millis();
   } else {  // otherwise use PID control
@@ -55,7 +55,7 @@ void AutoPID::run() {
         millis() - _lastStep;  // calculate time since last update
     if (_dT >= _timeStep) {    // if long enough, do PID calculations
       _lastStep = millis();
-      float _error = *_setpoint - *_input;
+      float _error = *_setpoint - _input;
       _integral +=
           (_error + _previousError) / 2 * _dT / 1000.0;  // Riemann sum integral
       //_integral = constrain(_integral, _outputMin/_Ki, _outputMax/_Ki);
@@ -85,8 +85,8 @@ float AutoPID::getIntegral() { return _integral; }
 
 void AutoPID::setIntegral(float integral) { _integral = integral; }
 
-void AutoPIDRelay::run() {
-  AutoPID::run();
+void AutoPIDRelay::run(float input) {
+  AutoPID::run(input);
   if (!_hasRun) {
     _pulseOffset = millis();
     _hasRun = true;
