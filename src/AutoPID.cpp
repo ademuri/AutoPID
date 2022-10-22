@@ -1,8 +1,7 @@
 #include "AutoPID.h"
 
-AutoPID::AutoPID(float *setpoint, float *output, float outputMin,
-                 float outputMax, float Kp, float Ki, float Kd) {
-  _setpoint = setpoint;
+AutoPID::AutoPID(float *output, float outputMin, float outputMax, float Kp,
+                 float Ki, float Kd) {
   _output = output;
   _outputMin = outputMin;
   _outputMax = outputMax;
@@ -32,8 +31,10 @@ void AutoPID::setOutputRange(float outputMin, float outputMax) {
 
 void AutoPID::setTimeStep(unsigned long timeStep) { _timeStep = timeStep; }
 
+void AutoPID::setSetpoint(float setpoint) { _setpoint = setpoint; }
+
 bool AutoPID::atSetPoint(float threshold) {
-  return abs(*_setpoint - _input) <= threshold;
+  return abs(_setpoint - _input) <= threshold;
 }  // bool AutoPID::atSetPoint
 
 void AutoPID::run(float input) {
@@ -44,10 +45,10 @@ void AutoPID::run(float input) {
   }
   // if bang thresholds are defined and we're outside of them, use bang-bang
   // control
-  if (_bangOn && ((*_setpoint - _input) > _bangOn)) {
+  if (_bangOn && ((_setpoint - _input) > _bangOn)) {
     *_output = _outputMax;
     _lastStep = millis();
-  } else if (_bangOff && ((_input - *_setpoint) > _bangOff)) {
+  } else if (_bangOff && ((_input - _setpoint) > _bangOff)) {
     *_output = _outputMin;
     _lastStep = millis();
   } else {  // otherwise use PID control
@@ -55,7 +56,7 @@ void AutoPID::run(float input) {
         millis() - _lastStep;  // calculate time since last update
     if (_dT >= _timeStep) {    // if long enough, do PID calculations
       _lastStep = millis();
-      float _error = *_setpoint - _input;
+      float _error = _setpoint - _input;
       _integral +=
           (_error + _previousError) / 2 * _dT / 1000.0;  // Riemann sum integral
       //_integral = constrain(_integral, _outputMin/_Ki, _outputMax/_Ki);

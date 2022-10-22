@@ -30,7 +30,7 @@ OneWire oneWire(TEMP_PROBE_PIN);
 DallasTemperature temperatureSensors(&oneWire);
 
 // input/output variables passed by reference, so they are updated automatically
-AutoPID myPID(&setPoint, &outputVal, OUTPUT_MIN, OUTPUT_MAX, KP, KI, KD);
+AutoPID myPID(&outputVal, OUTPUT_MIN, OUTPUT_MAX, KP, KI, KD);
 
 unsigned long lastTempUpdate;  // tracks clock time of last temp update
 
@@ -67,6 +67,7 @@ void setup() {
 void loop() {
   updateTemperature();
   setPoint = analogRead(POT_PIN);
+  myPID.setSetpoint(setPoint);
   myPID.run(temperature);  // call every loop, updates automatically at certain
                            // time interval
   analogWrite(OUTPUT_PIN, outputVal);
