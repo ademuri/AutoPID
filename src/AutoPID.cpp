@@ -1,8 +1,7 @@
 #include "AutoPID.h"
 
-AutoPID::AutoPID(float *output, float outputMin, float outputMax, float Kp,
-                 float Ki, float Kd) {
-  _output = output;
+AutoPID::AutoPID(float outputMin, float outputMax, float Kp, float Ki,
+                 float Kd) {
   _outputMin = outputMin;
   _outputMax = outputMax;
   setGains(Kp, Ki, Kd);
@@ -46,10 +45,10 @@ void AutoPID::run(float input) {
   // if bang thresholds are defined and we're outside of them, use bang-bang
   // control
   if (_bangOn && ((_setpoint - _input) > _bangOn)) {
-    *_output = _outputMax;
+    _output = _outputMax;
     _lastStep = millis();
   } else if (_bangOff && ((_input - _setpoint) > _bangOff)) {
-    *_output = _outputMin;
+    _output = _outputMin;
     _lastStep = millis();
   } else {  // otherwise use PID control
     unsigned long _dT =
@@ -65,7 +64,7 @@ void AutoPID::run(float input) {
       float PID = (_Kp * _error) + (_Ki * _integral) + (_Kd * _dError);
       //*_output = _outputMin + (constrain(PID, 0, 1) * (_outputMax -
       //_outputMin));
-      *_output = constrain(PID, _outputMin, _outputMax);
+      _output = constrain(PID, _outputMin, _outputMax);
     }
   }
 }  // void AutoPID::run
@@ -86,16 +85,18 @@ float AutoPID::getIntegral() { return _integral; }
 
 void AutoPID::setIntegral(float integral) { _integral = integral; }
 
+float AutoPID::getOutput() { return isStopped() ? 0 : _output; }
+
 void AutoPIDRelay::run(float input) {
   AutoPID::run(input);
   if (!_hasRun) {
     _pulseOffset = millis();
     _hasRun = true;
   }
-  *_relayState = ((millis() - _pulseOffset) % _pulseWidth) < _pulseValue;
+  _relayState = ((millis() - _pulseOffset) % _pulseWidth) < _pulseValue;
 }
 
-float AutoPIDRelay::getPulseValue() { return (isStopped() ? 0 : _pulseValue); }
+bool AutoPIDRelay::getRelayState() { return _relayState; }
 
 void AutoPIDRelay::reset() {
   AutoPID::reset();

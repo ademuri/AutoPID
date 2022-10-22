@@ -30,7 +30,7 @@ OneWire oneWire(TEMP_PROBE_PIN);
 DallasTemperature temperatureSensors(&oneWire);
 
 // input/output variables passed by reference, so they are updated automatically
-AutoPID myPID(&outputVal, OUTPUT_MIN, OUTPUT_MAX, KP, KI, KD);
+AutoPID myPID(OUTPUT_MIN, OUTPUT_MAX, KP, KI, KD);
 
 unsigned long lastTempUpdate;  // tracks clock time of last temp update
 
@@ -70,7 +70,7 @@ void loop() {
   myPID.setSetpoint(setPoint);
   myPID.run(temperature);  // call every loop, updates automatically at certain
                            // time interval
-  analogWrite(OUTPUT_PIN, outputVal);
+  analogWrite(OUTPUT_PIN, myPID.getOutput());
   digitalWrite(
       LED_PIN,
       myPID.atSetPoint(1));  // light up LED when we're at setpoint +-1 degree
