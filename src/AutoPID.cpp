@@ -33,7 +33,8 @@ void AutoPID::setTimeStep(unsigned long timeStep) { _timeStep = timeStep; }
 void AutoPID::setSetPoint(float setpoint) { _setpoint = setpoint; }
 
 bool AutoPID::atSetPoint(float threshold) {
-  // Note: avoid using abs because it's an Arduino macro, and std::abs is not available on older platforms (e.g. Uno)
+  // Note: avoid using abs because it's an Arduino macro, and std::abs is not
+  // available on older platforms (e.g. Uno)
   float diff = _setpoint - _input;
   if (diff < 0) {
     diff = -diff;
@@ -57,21 +58,22 @@ void AutoPID::run(float input) {
     _lastStep = millis();
   } else {  // otherwise use PID control
     // TODO: reset integrators when switching between bang-bang and PID?
-    // Or, maybe implement: http://brettbeauregard.com/blog/2011/04/improving-the-beginner%e2%80%99s-pid-reset-windup/
+    // Or, maybe implement:
+    // http://brettbeauregard.com/blog/2011/04/improving-the-beginner%e2%80%99s-pid-reset-windup/
     unsigned long _dT =
         millis() - _lastStep;  // calculate time since last update
     if (_dT >= _timeStep) {    // if long enough, do PID calculations
       _lastStep = millis();
       float _error = _setpoint - _input;
-      _integral +=
-          (_error + _previousError) / 2 * _dT / 1000.0;  // Riemann sum integral
-      //_integral = constrain(_integral, _outputMin/_Ki, _outputMax/_Ki);
-      float _dError = (_error - _previousError) / (_dT / 1000.0);  // derivative
+
+      // Riemann sum integral
+      _integral += (_error + _previousError) / 2 * _dT / 1000.0;
+      _integral = constrain(_integral, _outputMin / _Ki, _outputMax / _Ki);
+
+      float _dError = (_error - _previousError) / (_dT / 1000.0);
       _previousError = _error;
-      float PID = (_Kp * _error) + (_Ki * _integral) + (_Kd * _dError);
-      //*_output = _outputMin + (constrain(PID, 0, 1) * (_outputMax -
-      //_outputMin));
-      _output = constrain(PID, _outputMin, _outputMax);
+      _output = (_Kp * _error) + (_Ki * _integral) + (_Kd * _dError);
+      _output = constrain(_output, _outputMin, _outputMax);
     }
   }
 }  // void AutoPID::run

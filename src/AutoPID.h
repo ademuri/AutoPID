@@ -68,7 +68,8 @@ class AutoPID {
 class AutoPIDRelay : public AutoPID {
  public:
   AutoPIDRelay(unsigned long pulseWidth, float Kp, float Ki, float Kd)
-      : AutoPID(/*outputMin=*/0, /*outputMax=*/1.0, Kp, Ki, Kd), _pulseWidth(pulseWidth) {};
+      : AutoPID(/*outputMin=*/0, /*outputMax=*/1.0, Kp, Ki, Kd),
+        _pulseWidth(pulseWidth){};
 
   void run(float input) override;
 
