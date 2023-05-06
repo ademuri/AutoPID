@@ -77,10 +77,15 @@ class AutoPIDRelay : public AutoPID {
 
   void reset() override;
 
+  // Overrides the PID controller. Valid values are between 0 and 1; disabled
+  // when set outside that range.
+  void setManualOutput(float manualOutput) { _manualOutput = manualOutput; }
+
  private:
   bool _relayState = false;
   const unsigned long _pulseWidth;
   unsigned long _pulseOffset = 0;
   float _pulseValue = 0;
   bool _hasRun = false;
+  float _manualOutput = -1;
 };  // class AutoPIDRelay

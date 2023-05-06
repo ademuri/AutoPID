@@ -102,7 +102,11 @@ void AutoPIDRelay::run(float input) {
     _pulseOffset = millis();
     _hasRun = true;
   }
-  _pulseValue = getOutput() * _pulseWidth;
+  float output = getOutput();
+  if (_manualOutput >= 0 && _manualOutput <= 1) {
+    output = _manualOutput;
+  }
+  _pulseValue = output * _pulseWidth;
   _relayState = ((millis() - _pulseOffset) % _pulseWidth) < _pulseValue;
 }
 
