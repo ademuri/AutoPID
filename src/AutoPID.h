@@ -44,7 +44,7 @@ class AutoPID {
   float getIntegral();
   void setIntegral(float integral);
 
-  float getOutput();
+  virtual float getOutput();
 
  private:
   float _Kp;
@@ -80,6 +80,8 @@ class AutoPIDRelay : public AutoPID {
   // Overrides the PID controller. Valid values are between 0 and 1; disabled
   // when set outside that range.
   void setManualOutput(float manualOutput) { _manualOutput = manualOutput; }
+
+  float getOutput() override;
 
  private:
   bool _relayState = false;
